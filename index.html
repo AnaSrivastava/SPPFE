@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html ng-app="MyApp">
+    <head>
+        <title>SPP</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.8/angular.js"></script>
+        <link href="https://fonts.googleapis.com/css?family=Prompt&display=swap" rel="stylesheet">
+        <link rel="stylesheet" 
+                href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css">
+        <link rel="stylesheet" type="text/css" href="styles.css">
+    </head>
+    <body ng-controller="MyC">
+        <h1 class="animated bounceInDown">Stock Price Predictor</h1>
+        <h3>This Website has been created using AngularJS on front end and Flask on the Back End.
+            I trained my model using Linear Regression on stocks of Google,Apple,Facebook and Amazon.
+        Each Company has its own model.After selecting a comoany from the drop down, enter the opening price
+    as well as the highest and lowest price for the day and my model will predict the closing price.</h3>
+            <fieldset>
+            <legend>Input Area</legend>
+            <!-- <input list="browsers"> -->
+            <label for="GAFA">Company:</label>
+                <select id="GAFA" ng-model="stock.value" name="GAFA">
+                  <option value="Google" >Google</option>
+                  <option value="Apple" >Apple</option>
+                  <option value="Facebook">Facebook</option>
+                  <option value="Amazon" >Amazon</option>
+                </select> 
+                <br>
+                <label for="opp">Opening Price:</label>
+                <input type="text" name="opp" id="" ng-model="stock.op">
+                <br>
+                <label for="hip">Highest Price:</label>
+                <input type="text" name="hip" id="" ng-model="stock.hi">
+                <br>
+                <label for="lop">Lowest Price:</label>
+                <input type="text" name="lop" id="" ng-model="stock.lo">
+                <br>
+                <button type="button" 
+                        class="btn btn-primary" 
+                        ng-click="view()">View Details</button>
+            </fieldset>
+            <span>
+            <img src="https://loading.io/spinners/pacman/lg.eat-bean-pie-loading-gif.gif" 
+                height=75 width=75 ng-show="loading">
+            <p style="text-decoration: underline">Closing Price :{{stock.cl}}</p>
+            </span>
+            <script>
+                var MyApp=angular.module("MyApp",[]).controller("MyC",
+                function($scope,$http){
+                    $scope.loading=false;
+                    $scope.stock={
+                        value:"Google",
+                        op:null,
+                        hi:null,
+                        lo:null,
+                        cl:null
+                    };
+                    $scope.view=function(){
+                        $scope.IsVisible = $scope.IsVisible ? false : true;
+                       $http.post("http://localhost:5004/psp",JSON.stringify($scope.stock))
+                       .then(
+                       function(response){
+                            $scope.response=response;
+                            $scope.stock.cl=response.data.cl;
+                            console.log($scope.stock.cl);
+                       },
+                       function(response){console.log(response)}
+                       ).finally(
+                        $scope.IsVisible = $scope.IsVisible ? true : false
+                       )};
+                    
+                });
+            </script>
+    </body>
+</html>
