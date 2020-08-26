@@ -1,2 +1,2 @@
 # SPPFE
-Angular JS FE for SPP server
+Angular FE for SPP server
